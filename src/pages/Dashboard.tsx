@@ -3,7 +3,7 @@ import { HardDrive, FileText, Folder, Clock, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardHeader } from "../components/ui/Card";
 import { useAuth } from "../context/AuthContext";
 import { useStorage } from "../context/StorageContext";
-import { formatBytes, formatDate, getFileExtension, getFileInfo } from "../lib/utils";
+import { formatBytes, formatDate, getFileInfo } from "../lib/utils";
 import {
   FileText as FileTextIcon,
   Image,

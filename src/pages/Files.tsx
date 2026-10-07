@@ -22,7 +22,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 export function Files() {
   const {
     files, folders, currentFolderId, uploads, searchQuery,
-    navigateToFolder, createFolder, uploadFiles, deleteFile,
+    navigateToFolder, createFolder, uploadFiles, deleteFile, deleteFolder,
     toggleFavorite, renameFile, renameFolder, moveFile, shareFile,
     getDownloadUrl, getBreadcrumbs,
   } = useStorage();
@@ -85,10 +85,7 @@ export function Files() {
         break;
       case "delete":
         if (type === "file") await deleteFile(item.id);
-        else {
-          // Delete folder and its contents
-          await deleteFile(item.id); // simplified
-        }
+        else await deleteFolder(item.id);
         break;
       case "favorite":
         if (type === "file") await toggleFavorite(item.id);

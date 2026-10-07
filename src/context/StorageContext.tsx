@@ -229,8 +229,20 @@ export function StorageProvider({ children }: { children: ReactNode }) {
   };
 
   const deleteFolder = async (folderId: string) => {
-    setFolders((prev) => prev.filter((f) => f.id !== folderId));
+    const folder = folders.find((f) => f.id === folderId);
+    // Move all files in this folder to trash
     setFiles((prev) => prev.map((f) => f.folder_id === folderId ? { ...f, is_trashed: true, trashed_at: new Date().toISOString() } : f));
+    // Move all subfolders' files to trash recursively
+    const childFolders = folders.filter((f) => f.parent_id === folderId);
+    for (const child of childFolders) {
+      setFiles((prev) => prev.map((f) => f.folder_id === child.id ? { ...f, is_trashed: true, trashed_at: new Date().toISOString() } : f));
+    }
+    // Remove the folder and its children
+    setFolders((prev) => prev.filter((f) => f.id !== folderId && f.parent_id !== folderId));
+    if (folder) logActivity("DELETE", { file_name: folder.name });
+    if (!config.isDemoMode) {
+      await supabase.from("folders").delete().eq("id", folderId).eq("user_id", user!.user_id);
+    }
     addToast({ type: "info", title: "Folder deleted" });
   };
 
