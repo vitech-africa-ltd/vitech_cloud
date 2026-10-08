@@ -5,7 +5,7 @@
 import { supabase } from '../supabase/client';
 import { config } from '../../config';
 import type {
-  Profile, File, Folder, StorageUsage, Activity, Share, Notification,
+  Profile, File as FileRecord, Folder, StorageUsage, Activity, Share, Notification,
   ApiResponse, ApiError, ErrorCode
 } from '../../types/database';
 
@@ -38,10 +38,10 @@ function handleSupabaseError(error: any): ApiError {
 // ============================================
 
 export const filesApi = {
-  async list(userId: string, folderId?: string | null): Promise<ApiResponse<File[]>> {
+  async list(userId: string, folderId?: string | null): Promise<ApiResponse<FileRecord[]>> {
     if (config.isDemoMode) {
       const files = JSON.parse(localStorage.getItem('vitech-files') || '[]');
-      const filtered = files.filter((f: File) => 
+      const filtered = files.filter((f: FileRecord) => 
         f.owner_id === userId && 
         f.folder_id === folderId && 
         !f.deleted_at
@@ -65,16 +65,16 @@ export const filesApi = {
 
       const { data, error } = await query;
       if (error) return { data: null, error: handleSupabaseError(error) };
-      return { data: data as File[], error: null };
+      return { data: data as FileRecord[], error: null };
     } catch (error: any) {
       return { data: null, error: createError('DATABASE_ERROR', error.message) };
     }
   },
 
-  async getById(fileId: string, userId: string): Promise<ApiResponse<File>> {
+  async getById(fileId: string, userId: string): Promise<ApiResponse<FileRecord>> {
     if (config.isDemoMode) {
       const files = JSON.parse(localStorage.getItem('vitech-files') || '[]');
-      const file = files.find((f: File) => f.id === fileId && f.owner_id === userId);
+      const file = files.find((f: FileRecord) => f.id === fileId && f.owner_id === userId);
       return file 
         ? { data: file, error: null }
         : { data: null, error: createError('NOT_FOUND', 'File not found') };
@@ -89,13 +89,13 @@ export const filesApi = {
         .single();
 
       if (error) return { data: null, error: handleSupabaseError(error) };
-      return { data: data as File, error: null };
+      return { data: data as FileRecord, error: null };
     } catch (error: any) {
       return { data: null, error: createError('DATABASE_ERROR', error.message) };
     }
   },
 
-  async create(file: Partial<File>): Promise<ApiResponse<File>> {
+  async create(file: Partial<FileRecord>): Promise<ApiResponse<FileRecord>> {
     if (config.isDemoMode) {
       const files = JSON.parse(localStorage.getItem('vitech-files') || '[]');
       const newFile = {
@@ -103,7 +103,7 @@ export const filesApi = {
         id: crypto.randomUUID(),
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-      } as File;
+      } as FileRecord;
       files.push(newFile);
       localStorage.setItem('vitech-files', JSON.stringify(files));
       return { data: newFile, error: null };
@@ -117,16 +117,16 @@ export const filesApi = {
         .single();
 
       if (error) return { data: null, error: handleSupabaseError(error) };
-      return { data: data as File, error: null };
+      return { data: data as FileRecord, error: null };
     } catch (error: any) {
       return { data: null, error: createError('DATABASE_ERROR', error.message) };
     }
   },
 
-  async update(fileId: string, updates: Partial<File>, userId: string): Promise<ApiResponse<File>> {
+  async update(fileId: string, updates: Partial<FileRecord>, userId: string): Promise<ApiResponse<FileRecord>> {
     if (config.isDemoMode) {
       const files = JSON.parse(localStorage.getItem('vitech-files') || '[]');
-      const index = files.findIndex((f: File) => f.id === fileId && f.owner_id === userId);
+      const index = files.findIndex((f: FileRecord) => f.id === fileId && f.owner_id === userId);
       if (index === -1) {
         return { data: null, error: createError('NOT_FOUND', 'File not found') };
       }
@@ -145,7 +145,7 @@ export const filesApi = {
         .single();
 
       if (error) return { data: null, error: handleSupabaseError(error) };
-      return { data: data as File, error: null };
+      return { data: data as FileRecord, error: null };
     } catch (error: any) {
       return { data: null, error: createError('DATABASE_ERROR', error.message) };
     }
@@ -154,7 +154,7 @@ export const filesApi = {
   async delete(fileId: string, userId: string): Promise<ApiResponse<void>> {
     if (config.isDemoMode) {
       const files = JSON.parse(localStorage.getItem('vitech-files') || '[]');
-      const index = files.findIndex((f: File) => f.id === fileId && f.owner_id === userId);
+      const index = files.findIndex((f: FileRecord) => f.id === fileId && f.owner_id === userId);
       if (index === -1) {
         return { data: null, error: createError('NOT_FOUND', 'File not found') };
       }
@@ -281,8 +281,8 @@ export const storageApi = {
   async getUsage(userId: string): Promise<ApiResponse<StorageUsage>> {
     if (config.isDemoMode) {
       const files = JSON.parse(localStorage.getItem('vitech-files') || '[]');
-      const userFiles = files.filter((f: File) => f.owner_id === userId && !f.deleted_at);
-      const totalSize = userFiles.reduce((sum: number, f: File) => sum + f.size_bytes, 0);
+      const userFiles = files.filter((f: FileRecord) => f.owner_id === userId && !f.deleted_at);
+      const totalSize = userFiles.reduce((sum: number, f: FileRecord) => sum + f.size_bytes, 0);
       
       return {
         data: {

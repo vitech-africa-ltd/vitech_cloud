@@ -7,7 +7,7 @@ import {
   FileText, Image as ImageIcon, Video, Music, Archive, File, Edit3,
   Check, ArrowRight, Zap, Globe, HardDrive, RotateCcw, Mail, Lock,
   Eye, EyeOff, Users, Info, AlertCircle, CheckSquare, Square,
-  SortAsc, SortDesc, Filter, Eye as EyeIcon, ExternalLink, Command
+  SortAsc, SortDesc, Filter, Eye as EyeIcon, ExternalLink
 } from "lucide-react";
 import { ThemeProvider, ToastProvider, AuthProvider, StorageProvider, useTheme, useAuth, useStorage, useToast } from "./contexts";
 import { Button, Card, CardContent, Input, Modal, ToastContainer, EmptyState, Badge } from "./components/ui";
