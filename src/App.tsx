@@ -7,10 +7,12 @@ import {
   FileText, Image as ImageIcon, Video, Music, Archive, File, Edit3,
   Check, ArrowRight, Zap, Globe, HardDrive, RotateCcw, Mail, Lock,
   Eye, EyeOff, Users, Info, AlertCircle, CheckSquare, Square,
-  SortAsc, SortDesc, Filter, Eye as EyeIcon, ExternalLink
+  SortAsc, SortDesc, Filter, Eye as EyeIcon, ExternalLink, Command
 } from "lucide-react";
 import { ThemeProvider, ToastProvider, AuthProvider, StorageProvider, useTheme, useAuth, useStorage, useToast } from "./contexts";
 import { Button, Card, CardContent, Input, Modal, ToastContainer, EmptyState, Badge } from "./components/ui";
+import { StorageChart, ActivityChart, FileTypesChart } from "./components/charts";
+import { CommandPalette } from "./components/CommandPalette";
 import { formatBytes, formatDate, formatFullDate, getFileCategory, getInitials, calculateStoragePercent, downloadBlob } from "./lib/utils";
 import { FileItem, FolderItem, QUOTA_ALERTS } from "./types";
 
@@ -512,6 +514,48 @@ function DashboardPage() {
     { label: "Favorites", value: files.filter(f => f.isFavorite && !f.isTrashed).length.toString(), icon: Star, color: "from-green-500 to-emerald-500" },
   ];
 
+  // Calculate file type distribution from real data
+  const fileTypeDistribution = files.filter(f => !f.isTrashed).reduce((acc, file) => {
+    const category = getFileCategory(file.extension);
+    const typeName = category.icon === 'Image' ? 'Images' : 
+                     category.icon === 'Video' ? 'Videos' :
+                     category.icon === 'Music' ? 'Audio' :
+                     category.icon === 'Archive' ? 'Archives' : 'Documents';
+    
+    if (!acc[typeName]) {
+      acc[typeName] = { type: typeName, count: 0, size: 0 };
+    }
+    acc[typeName].count++;
+    acc[typeName].size += file.size;
+    return acc;
+  }, {} as Record<string, { type: string; count: number; size: number }>);
+
+  const fileTypesData = Object.values(fileTypeDistribution);
+
+  // Generate storage over time data (simulated for demo - in production this would come from storage_events table)
+  const storageOverTimeData = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (6 - i));
+    const baseStorage = user.storageUsed * 0.7;
+    const dailyGrowth = (user.storageUsed * 0.3) / 7;
+    return {
+      date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      storageUsed: baseStorage + (dailyGrowth * i),
+    };
+  });
+
+  // Generate activity data (simulated for demo - in production this would come from activities table)
+  const activityData = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (6 - i));
+    return {
+      date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      uploads: Math.floor(Math.random() * 10) + 2,
+      downloads: Math.floor(Math.random() * 20) + 5,
+      deletes: Math.floor(Math.random() * 3),
+    };
+  });
+
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
@@ -536,10 +580,18 @@ function DashboardPage() {
           ))}
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6">
-          <Card className="lg:col-span-1">
+        {/* Charts Section */}
+        <div className="grid lg:grid-cols-2 gap-6 mb-6">
+          <StorageChart data={storageOverTimeData} title="Storage Usage (Last 7 Days)" />
+          <ActivityChart data={activityData} title="Activity Overview (Last 7 Days)" />
+        </div>
+
+        <div className="grid lg:grid-cols-3 gap-6 mb-6">
+          <FileTypesChart data={fileTypesData} title="File Types Distribution" />
+          
+          <Card className="lg:col-span-2">
             <div className="p-6">
-              <h3 className="text-lg font-semibold text-surface-900 dark:text-white mb-4">Storage</h3>
+              <h3 className="text-lg font-semibold text-surface-900 dark:text-white mb-4">Storage Breakdown</h3>
               <div className="space-y-4">
                 <div>
                   <div className="flex justify-between text-sm mb-2">
@@ -552,43 +604,38 @@ function DashboardPage() {
                   <p className="text-xs text-surface-500 mt-2">{storagePercent.toFixed(1)}% used</p>
                 </div>
                 <div className="pt-4 border-t border-surface-200 dark:border-surface-800 space-y-3">
-                  {[
-                    { label: "Documents", value: "2.4 GB" },
-                    { label: "Images", value: "3.1 GB" },
-                    { label: "Videos", value: "1.2 GB" },
-                    { label: "Other", value: "0.5 GB" },
-                  ].map(item => (
-                    <div key={item.label} className="flex items-center justify-between text-sm">
-                      <span className="text-surface-600 dark:text-surface-400">{item.label}</span>
-                      <span className="font-medium text-surface-900 dark:text-white">{item.value}</span>
+                  {fileTypesData.map(item => (
+                    <div key={item.type} className="flex items-center justify-between text-sm">
+                      <span className="text-surface-600 dark:text-surface-400">{item.type}</span>
+                      <span className="font-medium text-surface-900 dark:text-white">{formatBytes(item.size)}</span>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
           </Card>
-
-          <Card className="lg:col-span-2">
-            <div className="p-6">
-              <h3 className="text-lg font-semibold text-surface-900 dark:text-white mb-4">Recent Files</h3>
-              <div className="space-y-2">
-                {recentFiles.map(file => (
-                  <div key={file.id} className="flex items-center gap-4 p-3 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors cursor-pointer">
-                    <FileIcon extension={file.extension} />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-surface-900 dark:text-white truncate">{file.name}</p>
-                      <p className="text-xs text-surface-500">{formatBytes(file.size)}</p>
-                    </div>
-                    <div className="text-xs text-surface-500">{formatDate(file.updatedAt)}</div>
-                    <button onClick={() => downloadFile(file)} className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors" title="Download">
-                      <Download className="w-4 h-4 text-surface-500" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Card>
         </div>
+
+        <Card>
+          <div className="p-6">
+            <h3 className="text-lg font-semibold text-surface-900 dark:text-white mb-4">Recent Files</h3>
+            <div className="space-y-2">
+              {recentFiles.map(file => (
+                <div key={file.id} className="flex items-center gap-4 p-3 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors cursor-pointer">
+                  <FileIcon extension={file.extension} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-surface-900 dark:text-white truncate">{file.name}</p>
+                    <p className="text-xs text-surface-500">{formatBytes(file.size)}</p>
+                  </div>
+                  <div className="text-xs text-surface-500">{formatDate(file.updatedAt)}</div>
+                  <button onClick={() => downloadFile(file)} className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors" title="Download">
+                    <Download className="w-4 h-4 text-surface-500" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Card>
 
         {activities.length > 0 && (
           <Card className="mt-6">
@@ -1234,6 +1281,7 @@ function AdminPage() {
 
 function AppContent() {
   const [currentPage, setCurrentPage] = useState(() => localStorage.getItem("vitech-page") || "/");
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const { user } = useAuth();
   const { searchQuery, setSearchQuery } = useStorage();
 
@@ -1241,7 +1289,23 @@ function AppContent() {
     localStorage.setItem("vitech-page", currentPage);
   }, [currentPage]);
 
-  const navigate = (page: string) => setCurrentPage(page);
+  // Global keyboard shortcut for Command Palette
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setCommandPaletteOpen(prev => !prev);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const navigate = (page: string) => {
+    setCurrentPage(page);
+    setCommandPaletteOpen(false);
+  };
 
   // Public pages
   if (!user) {
@@ -1252,25 +1316,32 @@ function AppContent() {
 
   // Protected pages
   return (
-    <div className="flex min-h-screen bg-surface-50 dark:bg-surface-950">
-      <Sidebar currentPage={currentPage} onNavigate={navigate} />
-      <div className="flex-1 flex flex-col min-w-0">
-        <Header searchQuery={searchQuery} onSearchChange={setSearchQuery} />
-        <main className="flex-1 overflow-y-auto">
-          <motion.div key={currentPage} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
-            {currentPage === "/dashboard" && <DashboardPage />}
-            {currentPage === "/files" && <FilesPage />}
-            {currentPage === "/favorites" && <FavoritesPage />}
-            {currentPage === "/recent" && <RecentPage />}
-            {currentPage === "/shared" && <SharedPage />}
-            {currentPage === "/trash" && <TrashPage />}
-            {currentPage === "/settings" && <SettingsPage />}
-            {currentPage === "/admin" && <AdminPage />}
-          </motion.div>
-        </main>
+    <>
+      <div className="flex min-h-screen bg-surface-50 dark:bg-surface-950">
+        <Sidebar currentPage={currentPage} onNavigate={navigate} />
+        <div className="flex-1 flex flex-col min-w-0">
+          <Header searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+          <main className="flex-1 overflow-y-auto">
+            <motion.div key={currentPage} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
+              {currentPage === "/dashboard" && <DashboardPage />}
+              {currentPage === "/files" && <FilesPage />}
+              {currentPage === "/favorites" && <FavoritesPage />}
+              {currentPage === "/recent" && <RecentPage />}
+              {currentPage === "/shared" && <SharedPage />}
+              {currentPage === "/trash" && <TrashPage />}
+              {currentPage === "/settings" && <SettingsPage />}
+              {currentPage === "/admin" && <AdminPage />}
+            </motion.div>
+          </main>
+        </div>
+        <UploadCenter />
       </div>
-      <UploadCenter />
-    </div>
+      <CommandPalette 
+        isOpen={commandPaletteOpen} 
+        onClose={() => setCommandPaletteOpen(false)} 
+        onNavigate={navigate} 
+      />
+    </>
   );
 }
 

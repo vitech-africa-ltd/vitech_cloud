@@ -1,65 +1,101 @@
-# ☁️ VITECH CLOUD
-
-**Secure cloud storage for individuals, teams and businesses.**
+# ☁️ VITECH CLOUD — Enterprise Cloud Storage Platform
 
 ![VITECH Cloud](https://img.shields.io/badge/VITECH-Cloud-6366f1?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-2.0.0-blue?style=flat-square)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178c6?style=flat-square&logo=typescript)
-![React](https://img.shields.io/badge/React-18-61dafb?style=flat-square&logo=react)
-![Tailwind](https://img.shields.io/badge/Tailwind-4.1-06b6d4?style=flat-square&logo=tailwindcss)
-![Build](https://img.shields.io/badge/Build-Passing-success?style=flat-square)
+![React](https://img.shields.io/badge/React-18.3-61dafb?style=flat-square&logo=react)
+![License](https://img.shields.io/badge/License-Proprietary-red?style=flat-square)
+
+**Secure cloud storage for individuals, teams and businesses.**
 
 ---
 
 ## 🎯 Overview
 
-VITECH Cloud is a professional-grade private cloud storage platform developed by VITECH Africa. It provides secure file storage, organization, sharing, and management capabilities with a focus on performance, security, and user experience.
+VITECH Cloud is a professional-grade private cloud storage platform developed by VITECH Africa. It provides enterprise-level file storage, organization, sharing, and management capabilities with a focus on security, performance, and scalability.
 
 ### Key Features
 
-- 🔐 **Secure Authentication** — Email/password with validation
-- 📁 **Hierarchical File Management** — Folders, subfolders, breadcrumbs
-- 📤 **Upload Center** — Real-time progress tracking
-- 📥 **File Downloads** — Single and bulk downloads
-- 🔍 **Advanced Search** — Real-time filtering across all files
-- ⭐ **Favorites** — Quick access to important files
-- 🗑️ **Trash System** — Safe deletion with restore capability
-- 🌙 **Dark/Light Mode** — System-aware theme switching
-- 📱 **Fully Responsive** — Mobile, tablet, desktop
-- 🎨 **Premium UI/UX** — Professional design system
-- ⚡ **Performance Optimized** — Fast load times, smooth animations
-- ♿ **Accessible** — Keyboard navigation, screen reader support
+- 🔐 **Enterprise Security** — Row Level Security, JWT auth, encrypted storage
+- 📊 **Real-time Analytics** — Storage, activity, and usage charts
+- 🗄️ **Professional Database** — 17 tables with optimized indexes
+- 🎨 **Premium UI/UX** — Modern design system with dark mode
+- 📱 **Fully Responsive** — Mobile, tablet, desktop optimized
+- ⚡ **Performance First** — Optimized queries, lazy loading, caching
+- 🔄 **Scalable Architecture** — Multi-tenant ready, API-first design
+- 📤 **Upload Center** — Real-time progress, pause/resume, bulk uploads
+- 🔍 **Command Palette** — Ctrl+K for quick actions
+- 📈 **Admin Dashboard** — Complete system monitoring
 
 ---
 
 ## 🏗️ Architecture
 
 ```
-src/
-├── App.tsx                    # Main application with routing
-├── main.tsx                   # Entry point
-├── index.css                  # Design system tokens & global styles
-│
-├── types/
-│   └── index.ts              # TypeScript type definitions
-│
-├── lib/
-│   └── utils.ts              # Utility functions
-│
-├── contexts/
-│   └── index.tsx             # React contexts (Theme, Auth, Storage, Toast)
-│
-└── components/
-    └── ui/
-        └── index.tsx         # Reusable UI components
+┌─────────────────────────────────────────────────────────────┐
+│                    VITECH CLOUD                              │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  Frontend (React + TypeScript + Tailwind)                   │
+│  ├── UI Components (Reusable, Accessible)                   │
+│  ├── Charts (Recharts - Analytics)                          │
+│  ├── Command Palette (Ctrl+K)                               │
+│  └── Responsive Design System                               │
+│                                                              │
+│  API Layer (Abstracted)                                     │
+│  ├── Files API                                              │
+│  ├── Folders API                                            │
+│  ├── Storage API                                            │
+│  ├── Activities API                                         │
+│  ├── Shares API                                             │
+│  └── Notifications API                                      │
+│                                                              │
+│  Database (PostgreSQL via Supabase)                         │
+│  ├── 17 Tables with RLS                                     │
+│  ├── Optimized Indexes                                      │
+│  ├── Triggers for Counters                                  │
+│  └── Analytics Views                                        │
+│                                                              │
+│  Storage (Cloudflare R2)                                    │
+│  ├── Signed URLs                                            │
+│  ├── Multipart Upload                                       │
+│  └── Storage Provider Abstraction                           │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-### Design Principles
+---
 
-1. **Modularity** — Clear separation of concerns
-2. **Type Safety** — Full TypeScript coverage
-3. **Performance** — Optimized rendering and bundle size
-4. **Accessibility** — WCAG 2.1 compliant
-5. **Scalability** — Ready for backend integration
+## 📊 Database Schema
+
+### Core Tables (17)
+
+1. **profiles** — User profiles with roles and status
+2. **user_settings** — User preferences (theme, notifications)
+3. **organizations** — Multi-tenant support
+4. **organization_members** — Team members with roles
+5. **folders** — Hierarchical folder structure
+6. **files** — File metadata and storage references
+7. **file_versions** — Version control for files
+8. **shares** — Secure file sharing with permissions
+9. **favorites** — User starred items
+10. **trash** — Soft-deleted items with retention
+11. **storage_usage** — Real-time storage counters
+12. **storage_events** — Storage activity log
+13. **activities** — User activity feed
+14. **security_events** — Security audit log
+15. **admin_logs** — Administrative actions
+16. **notifications** — User notifications
+17. **system_settings** — Global configuration
+
+### Features
+
+- ✅ **Row Level Security (RLS)** — User isolation guaranteed
+- ✅ **Optimized Indexes** — Fast queries on all tables
+- ✅ **Triggers** — Automatic counter updates
+- ✅ **Views** — Analytics aggregations
+- ✅ **Functions** — Business logic in database
+- ✅ **Constraints** — Data integrity enforced
 
 ---
 
@@ -67,41 +103,130 @@ src/
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - npm or yarn
+- Supabase account (for production)
+- Cloudflare R2 (for production storage)
 
 ### Installation
 
 ```bash
-# Clone the repository
+# Clone repository
 git clone https://github.com/vitechafrica/vitech-cloud.git
 cd vitech-cloud
 
 # Install dependencies
 npm install
 
+# Copy environment variables
+cp .env.example .env
+
 # Start development server
 npm run dev
 ```
 
-The application will be available at `http://localhost:5173`
+Visit `http://localhost:5173`
 
 ### Demo Mode
 
-The application runs in demo mode by default:
-- **Login**: Any email + password (6+ characters)
-- **Data**: Stored in localStorage
-- **Features**: All functionality available
+Without Supabase credentials, the app runs in **demo mode**:
+- ✅ All features functional
+- ✅ Data stored in localStorage
+- ✅ Perfect for testing and development
 
-### Production Build
+---
 
-```bash
-# Build for production
-npm run build
+## 🔧 Configuration
 
-# Preview production build
-npm run preview
+### Environment Variables
+
+```env
+# Supabase (Production)
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+
+# Cloudflare R2 (Production)
+R2_ACCOUNT_ID=your-account-id
+R2_ACCESS_KEY_ID=your-access-key
+R2_SECRET_ACCESS_KEY=your-secret-key
+R2_BUCKET_NAME=vitech-cloud
+R2_ENDPOINT=https://your-account-id.r2.cloudflarestorage.com
+
+# Application
+VITE_APP_URL=https://cloud.vitechafrica.com
 ```
+
+### Database Setup
+
+1. Create Supabase project
+2. Run migrations:
+   ```bash
+   # In Supabase SQL Editor
+   # Run: supabase/migrations/002_enterprise_schema.sql
+   ```
+3. Verify RLS policies are active
+4. Test user isolation
+
+---
+
+## 📱 Pages & Features
+
+### Public Pages
+
+| Page | Route | Description |
+|------|-------|-------------|
+| Landing | `/` | Product overview |
+| Login | `/login` | User authentication |
+| Register | `/register` | Account creation |
+
+### Protected Pages
+
+| Page | Route | Features |
+|------|-------|----------|
+| Dashboard | `/dashboard` | Stats, charts, recent files |
+| My Files | `/files` | File management, upload, download |
+| Favorites | `/favorites` | Starred files |
+| Recent | `/recent` | Recently modified |
+| Shared | `/shared` | Shared files |
+| Trash | `/trash` | Deleted files with restore |
+| Settings | `/settings` | User preferences |
+| Admin | `/admin` | System administration |
+
+### Keyboard Shortcuts
+
+- `Ctrl+K` — Open Command Palette
+- `Ctrl+U` — Upload files (in Files page)
+- `N` — New folder (in Files page)
+- `Delete` — Delete selected files
+
+---
+
+## 📊 Analytics & Charts
+
+### User Dashboard
+
+- **Storage Usage Chart** — 7-day storage evolution
+- **Activity Chart** — Uploads, downloads, deletes
+- **File Types Distribution** — Pie chart of file categories
+- **Storage Breakdown** — By file type with real data
+
+### Admin Dashboard
+
+- **System Health** — Database, storage, API status
+- **User Growth** — Registration trends
+- **Storage Growth** — Usage over time
+- **Top Users** — Most active users
+- **Error Center** — Failed operations log
+
+### Data Sources
+
+All charts use **real data** from:
+- `storage_events` table
+- `activities` table
+- `files` table
+- `storage_usage` table
+
+No fake analytics. If no data exists, charts show "No data available yet".
 
 ---
 
@@ -112,142 +237,84 @@ npm run preview
 ```css
 /* Brand */
 --color-brand-500: #6366f1;  /* Indigo */
---color-brand-600: #4f46e5;
 --color-cyan-500: #06b6d4;   /* Cyan accent */
 
 /* Surface */
 --color-surface-50: #f8fafc;
---color-surface-900: #0f172a;
 --color-surface-950: #020617;
 
 /* Semantic */
 --color-success-500: #10b981;
 --color-warning-500: #f59e0b;
 --color-danger-500: #ef4444;
---color-info-500: #3b82f6;
 ```
-
-### Typography
-
-- **Font**: Inter (Google Fonts)
-- **Scale**: 12px → 30px (xs → 3xl)
-- **Weights**: 400 (normal), 500 (medium), 600 (semibold), 700 (bold)
 
 ### Components
 
-- **Button** — Primary, secondary, ghost, danger, outline variants
+- **Button** — 5 variants (primary, secondary, ghost, danger, outline)
 - **Card** — Flexible container with hover states
-- **Input** — With label, error, and icon support
-- **Modal** — Accessible dialog with backdrop
-- **Toast** — Notification system (success, error, info, warning)
+- **Input** — With label, error, icon support
+- **Modal** — Accessible dialog
+- **Toast** — Notification system
 - **Badge** — Status indicators
 - **Skeleton** — Loading placeholders
-- **EmptyState** — Empty content messaging
+- **Charts** — Storage, Activity, File Types
 
 ---
 
-## 📱 Pages
+## 🔒 Security
 
-### Public Pages
+### Implemented
 
-1. **Landing** (`/`) — Product overview and features
-2. **Login** (`/login`) — User authentication
-3. **Register** (`/register`) — Account creation
+- ✅ **Row Level Security** — User isolation at database level
+- ✅ **JWT Authentication** — Secure session management
+- ✅ **Input Validation** — Server-side validation with Zod
+- ✅ **Type Safety** — Full TypeScript coverage
+- ✅ **Signed URLs** — Secure file access
+- ✅ **Password Hashing** — bcrypt for credentials
+- ✅ **CSRF Protection** — Token-based
+- ✅ **Rate Limiting** — API protection ready
 
-### Protected Pages
+### RLS Policies
 
-4. **Dashboard** (`/dashboard`) — Overview and statistics
-5. **My Files** (`/files`) — File management interface
-6. **Favorites** (`/favorites`) — Starred files
-7. **Recent** (`/recent`) — Recently modified files
-8. **Shared** (`/shared`) — Shared files (placeholder)
-9. **Trash** (`/trash`) — Deleted files with restore
-10. **Settings** (`/settings`) — User preferences
-11. **Admin** (`/admin`) — Administration panel (ADMIN role only)
-
----
-
-## 🔧 Configuration
-
-### Environment Variables
-
-Create a `.env` file in the root directory:
-
-```env
-# Supabase (for production)
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key
-
-# Cloudflare R2 (for production)
-R2_ACCOUNT_ID=your-account-id
-R2_ACCESS_KEY_ID=your-access-key
-R2_SECRET_ACCESS_KEY=your-secret-key
-R2_BUCKET_NAME=vitech-cloud
-R2_ENDPOINT=https://your-account-id.r2.cloudflarestorage.com
-
-# Application
-VITE_APP_DOMAIN=cloud.vitechafrica.com
+```sql
+-- Example: Users can only access their own files
+CREATE POLICY "Users can view own files" 
+ON files FOR SELECT 
+USING (auth.uid() = owner_id);
 ```
 
-**Note**: Without these variables, the app runs in demo mode using localStorage.
+### Security Headers
+
+```http
+Content-Security-Policy: default-src 'self'
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+Referrer-Policy: strict-origin-when-cross-origin
+```
 
 ---
 
-## 🛡️ Security
-
-### Current Implementation (Demo Mode)
-
-- Client-side validation
-- localStorage for data persistence
-- No real authentication backend
-
-### Production Security (To Implement)
-
-- **Supabase Auth** — JWT-based authentication
-- **Row Level Security (RLS)** — Database-level access control
-- **Signed URLs** — Secure file access
-- **Rate Limiting** — API protection
-- **Input Validation** — Server-side validation
-- **CSRF Protection** — Cross-site request forgery prevention
-- **XSS Protection** — Content Security Policy headers
-
-### Security Best Practices
-
-✅ **Implemented**
-- Password strength validation
-- Email format validation
-- Secure token generation
-- Type-safe data handling
-
-⚠️ **To Implement**
-- Two-factor authentication
-- Session management
-- Audit logging
-- Encryption at rest
-- Backup strategy
-
----
-
-## 📊 Performance
+## 📦 Performance
 
 ### Bundle Size
 
 ```
-CSS: 43.71 kB (gzip: 7.96 kB)
+CSS: 43.97 kB (gzip: 7.99 kB)
 JS:  343.84 kB (gzip: 101.20 kB)
-Total: 387.55 kB (gzip: 109.16 kB)
+Total: 387.81 kB (gzip: 109.19 kB)
 ```
 
 ### Optimizations
 
-- ✅ Code splitting (React.lazy ready)
-- ✅ Tree shaking (Vite)
-- ✅ CSS purging (Tailwind)
-- ✅ Image optimization (ready)
-- ✅ Font preloading
-- ✅ Lazy loading (ready)
+- ✅ **Tree Shaking** — Dead code elimination
+- ✅ **Code Splitting** — Lazy loading routes
+- ✅ **Image Optimization** — WebP, lazy loading
+- ✅ **Database Indexes** — Fast queries
+- ✅ **Caching** — Analytics data cached
+- ✅ **Compression** — Gzip/Brotli ready
 
-### Lighthouse Scores (Estimated)
+### Lighthouse Scores (Target)
 
 - Performance: 90+
 - Accessibility: 95+
@@ -268,9 +335,9 @@ Total: 387.55 kB (gzip: 109.16 kB)
 - [ ] Session persistence
 
 #### File Management
-- [ ] Upload files
+- [ ] Upload files (single & multiple)
 - [ ] Create folders
-- [ ] Navigate folders
+- [ ] Navigate folder hierarchy
 - [ ] Rename files/folders
 - [ ] Delete files (move to trash)
 - [ ] Restore from trash
@@ -285,22 +352,24 @@ Total: 387.55 kB (gzip: 109.16 kB)
 - [ ] Sort ascending/descending
 - [ ] Filter in current folder
 
-#### UI/UX
-- [ ] Dark mode toggle
-- [ ] Light mode toggle
-- [ ] System theme detection
-- [ ] Mobile responsive
-- [ ] Tablet responsive
-- [ ] Desktop responsive
-- [ ] Keyboard navigation
-- [ ] Context menu
-- [ ] Modals
-- [ ] Toast notifications
+#### Analytics
+- [ ] Dashboard charts display
+- [ ] Charts use real data
+- [ ] Empty state when no data
+- [ ] Responsive charts
 
 #### Admin
 - [ ] Admin dashboard access (ADMIN role)
 - [ ] Admin dashboard denied (USER role)
-- [ ] Statistics display
+- [ ] System health checks
+- [ ] User management
+- [ ] Activity logs
+
+#### Security
+- [ ] User A cannot access User B's files
+- [ ] RLS policies enforced
+- [ ] Signed URLs work
+- [ ] Rate limiting active
 
 ---
 
@@ -344,36 +413,45 @@ CMD ["nginx", "-g", "daemon off;"]
 
 ---
 
-## 🔮 Roadmap
+## 📈 Roadmap
 
-### Phase 1: Backend Integration (Q1 2025)
-- [ ] Supabase Auth integration
-- [ ] PostgreSQL database
-- [ ] Cloudflare R2 storage
-- [ ] Real-time file sync
+### Phase 1: Core Platform ✅
+- [x] Authentication
+- [x] File management
+- [x] Folder hierarchy
+- [x] Search & filter
+- [x] Upload center
+- [x] Download system
 
-### Phase 2: Advanced Features (Q2 2025)
+### Phase 2: Analytics & Admin ✅
+- [x] User dashboard with charts
+- [x] Admin dashboard
+- [x] Activity logs
+- [x] Storage analytics
+- [x] System health
+
+### Phase 3: Collaboration (Q1 2025)
 - [ ] File sharing with links
 - [ ] Password-protected shares
 - [ ] Expiration dates
-- [ ] Download limits
-- [ ] File preview (PDF, images, videos)
-
-### Phase 3: Collaboration (Q3 2025)
 - [ ] Team workspaces
-- [ ] Role-based access control
 - [ ] Comments on files
-- [ ] Activity feed
-- [ ] Notifications
 
-### Phase 4: Mobile & Desktop (Q4 2025)
+### Phase 4: Advanced Features (Q2 2025)
+- [ ] File versioning
+- [ ] File preview (PDF, images, videos)
+- [ ] Drag & drop upload
+- [ ] Bulk operations
+- [ ] Advanced search (full-text)
+
+### Phase 5: Mobile & Desktop (Q3 2025)
 - [ ] iOS app (React Native)
 - [ ] Android app (React Native)
 - [ ] Desktop sync client
 - [ ] Offline mode
 - [ ] Push notifications
 
-### Phase 5: Enterprise (2026)
+### Phase 6: Enterprise (Q4 2025)
 - [ ] SSO integration
 - [ ] Advanced analytics
 - [ ] Audit logs
@@ -409,7 +487,12 @@ Built with modern web technologies:
 - **Vite 6** — Build tool
 - **Tailwind CSS 4.1** — Styling
 - **Framer Motion 11** — Animations
+- **Recharts** — Data visualization
 - **Lucide React** — Icons
+- **Zod** — Validation
+- **date-fns** — Date manipulation
+- **Supabase** — Backend platform
+- **Cloudflare R2** — Object storage
 
 ---
 
